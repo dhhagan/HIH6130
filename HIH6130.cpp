@@ -14,8 +14,6 @@ HIH6130::HIH6130(uint8_t address)
 	_address = address;
 	_humidity_lo = 0;
 	_humidity_hi = 0;
-	_humidity_data = 0;
-	_temp_data = 0;
 	_temp_hi = 0;
 	_temp_lo = 0;
 	_status = 0;
@@ -47,17 +45,9 @@ void HIH6130::readRHT(){
 	// Get the status (first two bits of _humidity_hi_)
 	_status = (_humidity_hi >> 6);
 
-	// Drop the first two bits from _humidity_hi
-	_humidity_hi = _humidity_hi & 0x3f;
+	// Calculate Relative Humidity
+	humidity = (double)(((unsigned int) (_humidity_hi & 0x3f) << 8) | _humidity_lo) * 100 / (pow(2,14) - 1);
 
-	// Add the two 8-bit registers together -> relative humidity
-	_humidity_data = ((unsigned int) _humidity_hi << 8) | _humidity_lo;
-
-	// Add the two 8-bit registers together -> temperature
-	_temp_data = (unsigned int) (_temp_hi << 6) + (_temp_lo >> 2);
-
-	//humidity = 2.3;
-	//temperature = 1.0;
-	humidity = (double) _humidity_data * 100 / (pow(2,14) - 1);
-	temperature = (double) (_temp_data / (pow(2,14) - 1)) * 165 - 40;
+	// Calculate Temperature
+	temperature = (double) (((unsigned int) (_temp_hi << 6) + (_temp_lo >> 2)) / (pow(2, 14) - 1) * 165 - 40);
 }
