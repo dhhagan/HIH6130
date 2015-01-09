@@ -5,7 +5,7 @@
   Use as you like. MIT license.
 */
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include "HIH6130.h"
 #include <Wire.h>
 
@@ -26,9 +26,8 @@ void HIH6130::begin(){
 }
 
 void HIH6130::readRHT(){
-
 	// reads data from the sensor and stores them in temporary variables that
-	// are then accessed via the readT() and readRH functions
+	// are then accessed via public variables
 	Wire.beginTransmission(_address);
 	Wire.endTransmission();
 
